@@ -1,0 +1,26 @@
+{
+  "name": "lumen-compiler",
+  "version": "0.0.1",
+  "description": "this is a express server that is used for compiling codes written by the users of LUMEN",
+  "main": "src/app.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "compilation-server"
+  ],
+  "author": "Udit Kanti De",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.8.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}
