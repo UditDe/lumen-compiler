@@ -22,7 +22,8 @@ export const compileCpp = async (
     const codePath = path.join(tempDir, "main.cpp");
     const inputPath = path.join(tempDir, "input.txt");
     const outputPath = path.join(tempDir, "output.txt");
-
+    const compiledPath = path.join(tempDir, "a.out");
+    
     // Safely write code and input
     writeFileSafe(codePath, code);
     if (input) writeFileSafe(inputPath, input);
@@ -49,6 +50,6 @@ export const compileCpp = async (
     } finally {
         // cleanup
         const { cleanupFiles } = await import("../utils/cleanup.js");
-        await cleanupFiles(codePath, inputPath, outputPath);
+        await cleanupFiles(codePath, inputPath, outputPath, compiledPath);
     }
 };
