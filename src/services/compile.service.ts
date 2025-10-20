@@ -31,18 +31,24 @@ export const compileCpp = async (
     const runCommand = `${tempDir}/a.out < ${inputPath} > ${outputPath}`;
 
     try {
-        // Compile with timeout
-        await execAsync(compileCommand, { timeout: 5000 });
-    } catch (err: any) {
-        throw new Error(`Compilation Error: ${err.stderr || err.message}`);
-    }
+        try {
+            // Compile with timeout
+            await execAsync(compileCommand, { timeout: 5000 });
+        } catch (err: any) {
+            throw new Error(`Compilation Error: ${err.stderr || err.message}`);
+        }
 
-    try {
-        // Run program with timeout
-        await execAsync(runCommand, { timeout: 3000 });
-        const output = fs.readFileSync(outputPath, "utf-8");
-        return output;
-    } catch (err: any) {
-        throw new Error(`Runtime Error: ${err.stderr || err.message}`);
+        try {
+            // Run program with timeout
+            await execAsync(runCommand, { timeout: 3000 });
+            const output = fs.readFileSync(outputPath, "utf-8");
+            return output;
+        } catch (err: any) {
+            throw new Error(`Runtime Error: ${err.stderr || err.message}`);
+        }
+    } finally {
+        // cleanup
+        const { cleanupFiles } = await import("../utils/cleanup.js");
+        await cleanupFiles(codePath, inputPath, outputPath);
     }
 };

@@ -5,6 +5,14 @@ import type {
     CompileResponse,
 } from "../types/compileTypes.js";
 
+export const healthCheck = (req: Request, res: Response) => {
+    res.status(200).json({
+        status: "ok",
+        message: "Compiler backend is running",
+        timestamp: new Date().toISOString(),
+    });
+};
+
 /*
     ## Explanation of --> Request<{}, {}, CompileRequestBody>
     The first {} → URL parameters. We don’t have any in /compile, so we use empty object.
