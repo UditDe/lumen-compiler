@@ -4,6 +4,7 @@ import { exec } from "child_process";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { writeFileSafe, ensureDir } from "../utils/fileUtils.js";
+import { v4 as uuidv4 } from "uuid";
 
 const execAsync = promisify(exec);
 
@@ -14,7 +15,8 @@ export const compileCpp = async (
     code: string,
     input: string = ""
 ): Promise<string> => {
-    const tempDir = path.join(__dirname, "../temp");
+    const jobId = `${Date.now()}_${uuidv4()}`
+    const tempDir = path.join(__dirname, "../temp", jobId);
 
     // Ensure temp directory exists
     ensureDir(tempDir);
@@ -49,7 +51,8 @@ export const compileCpp = async (
         }
     } finally {
         // cleanup
-        const { cleanupFiles } = await import("../utils/cleanup.js");
+        const { cleanupFiles, removeTempJobFolder } = await import("../utils/cleanup.js");
         await cleanupFiles(codePath, inputPath, outputPath, compiledPath);
+        await removeTempJobFolder(tempDir);
     }
 };
