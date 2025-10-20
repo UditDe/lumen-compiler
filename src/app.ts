@@ -17,6 +17,6 @@ app.use(requestLogger); // <-- logs every request
 
 app.use("/api/v1/compile", apiRateLimiter, compileRouter);
 
-app.listen(PORT, () => {
+app.listen(PORT || 3000, () => {
     console.log(`⚡ Server running on http://localhost:${PORT}`);
 });
