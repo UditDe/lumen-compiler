@@ -14,7 +14,7 @@ const customFormat = printf(({ level, message, timestamp }) => {
 */
 
 export const logger = winston.createLogger({
-    level: process.env.LOG_LEVEL || "info",
+    level: process.env.LOG_LEVEL as string,
     format: combine(timestamp(), customFormat),
     transports: [
         new winston.transports.Console({

@@ -28,7 +28,7 @@ export const compileCpp = async (
     
     // Safely write code and input
     writeFileSafe(codePath, code);
-    if (input) writeFileSafe(inputPath, input);
+    writeFileSafe(inputPath, input);
 
     const compileCommand = `g++ ${codePath} -o ${tempDir}/a.out`;
     const runCommand = `${tempDir}/a.out < ${inputPath} > ${outputPath}`;
