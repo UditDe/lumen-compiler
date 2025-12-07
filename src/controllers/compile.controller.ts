@@ -30,9 +30,18 @@ export const compileCppController = async (
     if (!code) {
         return res.status(400).json({ error: "Code is Required Bhaii" });
     }
+    if (!Array.isArray(input)) {
+        return res
+            .status(400)
+            .json({ error: "Input Ko Array format main send kar bhaiii" });
+    }
 
     try {
-        const output = await compileCpp(code, input);
+        const output: string[] = [];
+        for (const inp of input) {
+            const res = await compileCpp(code, inp ?? "");
+            output.push(res);
+        }
         return res.status(200).json({ output });
     } catch (err: any) {
         return res.status(500).json({ error: err.message });

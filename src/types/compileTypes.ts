@@ -1,9 +1,9 @@
 export interface CompileRequestBody {
   code: string;
-  input?: string;
+  input: string[];
 }
 
 export interface CompileResponse {
-  output?: string;
+  output?: string[];
   error?: string;
 }
