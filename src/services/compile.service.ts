@@ -5,6 +5,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { writeFileSafe, ensureDir } from "../utils/fileUtils.js";
 import { v4 as uuidv4 } from "uuid";
+import { cleanupFiles, removeTempJobFolder } from "../utils/cleanup.js";
 
 const execAsync = promisify(exec);
 
@@ -13,9 +14,9 @@ const __dirname = path.dirname(__filename);
 
 export const compileCpp = async (
     code: string,
-    input: string = ""
-): Promise<string> => {
-    const jobId = `${Date.now()}_${uuidv4()}`
+    input: string[]
+): Promise<string[]> => {
+    const jobId = `${Date.now()}_${uuidv4()}`;
     const tempDir = path.join(__dirname, "../temp", jobId);
 
     // Ensure temp directory exists
@@ -25,13 +26,11 @@ export const compileCpp = async (
     const inputPath = path.join(tempDir, "input.txt");
     const outputPath = path.join(tempDir, "output.txt");
     const compiledPath = path.join(tempDir, "a.out");
-    
+
     // Safely write code and input
     writeFileSafe(codePath, code);
-    writeFileSafe(inputPath, input);
 
     const compileCommand = `g++ ${codePath} -o ${tempDir}/a.out`;
-    const runCommand = `${tempDir}/a.out < ${inputPath} > ${outputPath}`;
 
     try {
         try {
@@ -40,18 +39,28 @@ export const compileCpp = async (
         } catch (err: any) {
             throw new Error(`Compilation Error: ${err.stderr || err.message}`);
         }
+        const result : string[] = [];
+        for(const inp of input) {
+            writeFileSafe(inputPath, inp ?? "");
+            const runCommand = `${tempDir}/a.out < ${inputPath} > ${outputPath}`;
 
-        try {
-            // Run program with timeout
-            await execAsync(runCommand, { timeout: 3000 });
-            const output = fs.readFileSync(outputPath, "utf-8");
-            return output;
-        } catch (err: any) {
-            throw new Error(`Runtime Error: ${err.stderr || err.message}`);
+            try {
+                // Run program with timeout
+                await execAsync(runCommand, { timeout: 3000 });
+                const output = fs.readFileSync(outputPath, "utf-8");
+                result.push(output)
+
+            } catch (err: any) {
+                throw new Error(`Runtime Error: ${err.stderr || err.message}`);
+            } finally {
+                // cleanup the temporary inputpath
+                await cleanupFiles(inputPath)
+            }
         }
+        return result;
+
     } finally {
         // cleanup
-        const { cleanupFiles, removeTempJobFolder } = await import("../utils/cleanup.js");
         await cleanupFiles(codePath, inputPath, outputPath, compiledPath);
         await removeTempJobFolder(tempDir);
     }

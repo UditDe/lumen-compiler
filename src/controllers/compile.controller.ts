@@ -37,11 +37,11 @@ export const compileCppController = async (
     }
 
     try {
-        const output: string[] = [];
-        for (const inp of input) {
-            const res = await compileCpp(code, inp ?? "");
-            output.push(res);
-        }
+        const output: string[] = await compileCpp(code, input);
+        // for (const inp of input) {
+        //     const result = await compileCpp(code, inp ?? "");
+        //     output.push(result);
+        // }
         return res.status(200).json({ output });
     } catch (err: any) {
         return res.status(500).json({ error: err.message });
