@@ -6,6 +6,8 @@ import compileRouter from "./routes/compile.route.js";
 import { requestLogger } from "./middleware/requestLogger.js";
 import { apiRateLimiter } from "./middleware/rateLimiter.js";
 import { connectDB } from "./config/mongo.config.js";
+import { error_handler } from "./utils/error.handler.js";
+import question_router from "./routes/question.route.js";
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.use(bodyParser.json());
 app.use(requestLogger); // <-- logs every request
 
 app.use("/api/v1/compile", apiRateLimiter, compileRouter);
+app.use("/api/v1/questions", apiRateLimiter, question_router);
+app.use(error_handler);
 
 app.listen(PORT || 3000, () => {
     connectDB();

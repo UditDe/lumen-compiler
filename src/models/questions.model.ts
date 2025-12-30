@@ -16,9 +16,7 @@ const question_schema = new mongoose.Schema<question_type>({
     _id: {
         type: String,
         default: () => nanoid_custom(),
-        required: true,
-        index: true,
-        unique: true,
+        immutable: true
     },
     question_title: {
         type: String,
